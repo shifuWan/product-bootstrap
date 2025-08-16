@@ -9,3 +9,84 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+aside {
+    position: fixed;
+    background: #f9f7f7;
+    width: 240px;
+    height: 100vh;
+    padding: 1.25rem;
+    border-right: 1px solid #e0e0e0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    row-gap: 2rem;
+}
+
+aside .sidebar-item__label,
+aside .sidebar-item__icon {
+    font-size: 1rem;
+    white-space: nowrap;
+    color: #262629;
+}
+
+aside .sidebar-item {
+    height: 40px;
+    padding: 0 1rem;
+}
+
+aside .sidebar-item:hover,
+aside .sidebar-item.active {
+    background-color: #e0e0e0;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+aside.hidden {
+    transform: translateX(-100%);
+}
+
+
+body:has(aside.hidden)::before {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#toggle-aside {
+    cursor: pointer;
+}
+
+@media (min-width: 992px) {
+    aside {
+        position: static;
+    }
+
+    aside.hidden .menu {
+        justify-content: center;
+    }
+
+    aside.hidden .sidebar-item__label {
+        display: none;
+    }
+
+    aside.hidden {
+        transform: translateX(0);
+        width: 60px;
+    }
+
+    body::before {
+        display: none;
+    }
+
+}
