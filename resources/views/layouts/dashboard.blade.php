@@ -1,3 +1,5 @@
+@include('sweetalert2::index')
+
 <!DOCTYPE html>
 <html>
 
@@ -46,7 +48,7 @@
                 </div>
             </nav>
         </header>
-        <main class="container-fluid">
+        <main class="container-fluid flex-grow-1">
             @yield('content')
         </main>
     </div>
