@@ -22,14 +22,14 @@
         </div>
         <div class="d-flex flex-grow-1 menu">
             <ul class="list-unstyled d-flex flex-column row-gap-1 flex-grow-1">
-                <li class="sidebar-item d-flex align-items-center active">
-                    <a href="" class="text-decoration-none d-flex column-gap-1">
+                <li class="sidebar-item d-flex align-items-center @if(request()->is('categories*')) active @endif">
+                    <a href="{{ route('categories.index') }}" class="text-decoration-none d-flex column-gap-1">
                         <i class="bi bi-tag-fill cursor-pointer sidebar-item__icon"></i>
                         <span class="sidebar-item__label">Categories</span>
                     </a>
                 </li>
-                <li class="sidebar-item d-flex align-items-center">
-                    <a href="" class="text-decoration-none d-flex column-gap-1">
+                <li class="sidebar-item d-flex align-items-center @if(request()->is('products*')) active @endif">
+                    <a href="{{ route('products.index') }}" class="text-decoration-none d-flex column-gap-1">
                         <i class="bi bi-house-fill sidebar-item__icon"></i>
                         <span class="sidebar-item__label">Products</span>
                     </a>
