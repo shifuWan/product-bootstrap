@@ -26,4 +26,30 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }   
+
+    public function scopeSearch($q, ?string $term)
+    {
+        return $q->where('name', 'LIKE', '%'.$term.'%');
+    }
+
+    public function scopeCategorySlug($q, ?string $slug)
+    {
+        if (!$slug) return $q;
+        return $q->whereHas('category', fn($c) => $c->where('slug', $slug));
+    }
+
+    public function scopePriceBetween($q, $min, $max)
+    {
+        return $q
+            ->when($min !== null, fn($qq) => $qq->where('price', '>=', (float)$min))
+            ->when($max !== null, fn($qq) => $qq->where('price', '<=', (float)$max));
+    }
+
+    public function scopeSortBy($q, ?string $field, ?string $direction)
+    {
+        $allowed = ['price', 'name'];
+        $field = in_array($field, $allowed, true) ? $field : 'name';
+        $direction = $direction === 'desc' ? 'desc' : 'asc';
+        return $q->orderBy($field, $direction);
+    }
 }
