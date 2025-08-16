@@ -20,9 +20,10 @@ class ProductFactory extends Factory
     {
         $name = ucfirst(fake()->unique()->words(3, true));
         return [
+            'id' => Str::ulid(),
             'name' => $name,
             'category_id' => Category::inRandomOrder()->value('id') ?? Category::factory(),
-            'slug' => Str::slug($name . '-' . fake()->unique()->numerify('###')),
+            'slug' => Str::slug($name . '-' . fake()->numerify('####').'-'.fake()->numerify('####')),
             'description' => fake()->optional()->paragraphs(2, true),
             'price' => fake()->randomFloat(2, 5, 5000),
             'is_active' => fake()->randomElement([true, false]),

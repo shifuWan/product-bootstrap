@@ -13,13 +13,17 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        $chunks = 100;     // 100 x 1,000 = 100,000
+        $chunks = 20;     // 20 x 1,000 = 20,000
         $perChunk = 1000;
 
+        $start = microtime(true);
         for ($i = 0; $i < $chunks; $i++) {
-            Product::factory()->count($perChunk)->create();
-            
-            $this->command?->info("Seeded chunk ".($i+1)."/{$chunks}");
+            $products = Product::factory()->count($perChunk)->make();
+            Product::insert($products->toArray());
+
+            $this->command->info("Seeded chunk ".($i+1)."/{$chunks}");
         }
+        $end = microtime(true);
+        $this->command->info("Time taken: " . round($end - $start, 2) . " seconds");
     }
 }
