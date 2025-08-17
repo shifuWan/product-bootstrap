@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SweetAlert2\Laravel\Swal;
@@ -38,15 +39,20 @@ class ProductController extends Controller
         $sort = $request->get('sort', 'name'); // name|price
         $dir = $request->get('dir', 'asc');   // asc|desc
 
-        $products = Product::with('category')
-            ->withAvg('reviews', 'rating')
-            ->withCount('reviews')
-            ->search($search)
-            ->categorySlug($category)
-            ->priceBetween($min, $max)
-            ->sortBy($sort, $dir)
-            ->paginate($limit)->withQueryString();
+        $cacheKey = 'products:' . md5(json_encode(compact('search', 'category', 'min', 'max', 'sort', 'dir', 'limit', 'page')));
 
+        $products = Cache::tags(['products'])->remember($cacheKey, now()->addMinutes(5), function () use ($limit, $search, $category, $min, $max, $sort, $dir) {
+            $products = Product::with('category')
+                ->withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->search($search)
+                ->categorySlug($category)
+                ->priceBetween($min, $max)
+                ->sortBy($sort, $dir)
+                ->paginate($limit)->withQueryString();
+
+            return $products;
+        });
 
         return ProductResource::collection($products);
 
