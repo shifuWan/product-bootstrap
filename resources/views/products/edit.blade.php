@@ -68,6 +68,77 @@
                 </div>
             </div>
 
+            {{-- Variants --}}
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Variants</span>
+                    <button type="button" id="addVariant" class="btn btn-outline-secondary btn-sm">+ Tambah Variant</button>
+                </div>
+                <div class="card-body">
+                    <div id="variants" class="vstack gap-3">
+                        
+                        <template id="variantRowTpl">
+                            <div class="row g-2 align-items-end variant-row">
+                                <div class="col-md-3">
+                                    <label class="form-label small">SKU <span class="text-danger">*</span></label>
+                                    <input type="text" name="variants[IDX][sku]" class="form-control"
+                                        placeholder="SKU-XXXXXX">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Nama Variant <span class="text-danger">*</span></label>
+                                    <input type="text" name="variants[IDX][variant]" class="form-control"
+                                        placeholder="Color: Red / Size: L">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small">Harga (Rp) <span class="text-danger">*</span></label>
+                                    <input type="number" step="0.01" name="variants[IDX][price]" class="form-control"
+                                        placeholder="0.00">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small">Stock <span class="text-danger">*</span></label>
+                                    <input type="number" name="variants[IDX][stock]" class="form-control" value="0" min="0">
+                                </div>
+                                <div class="col-md-1 d-grid">
+                                    <button type="button" class="btn btn-outline-danger remove-variant">Hapus</button>
+                                </div>
+                            </div>
+                        </template>
+
+                        @if($product->variants->count() > 0)
+                            @foreach($product->variants as $i => $v)
+                                <div class="row g-2 align-items-end variant-row">
+                                    <div class="col-md-3">
+                                        <label class="form-label small">SKU <span class="text-danger">*</span></label>
+                                        <input type="text" name="variants[{{ $i }}][sku]" class="form-control"
+                                            value="{{ $v->sku ?? '' }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small">Nama Variant <span class="text-danger">*</span></label>
+                                        <input type="text" name="variants[{{ $i }}][variant]" class="form-control"
+                                            value="{{ $v->variant ?? '' }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label small">Harga (Rp) <span class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" name="variants[{{ $i }}][price]" class="form-control"
+                                            value="{{ $v->price ?? '' }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label small">Stock <span class="text-danger">*</span></label>
+                                        <input type="number" name="variants[{{ $i }}][stock]" class="form-control"
+                                            value="{{ $v->stock ?? 0 }}">
+                                    </div>
+                                    <div class="col-md-1 d-grid">
+                                        <button type="button" class="btn btn-outline-danger remove-variant">Hapus</button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                </div>
+            </div>
+
+
 
             <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-primary px-4">Simpan</button>
@@ -75,5 +146,34 @@
             </div>
         </form>
     </div>
+    
+    <script>
+        const variantsWrap = document.getElementById('variants');
+        const tpl = document.getElementById('variantRowTpl').content;
+        const addBtn = document.getElementById('addVariant');
+        let idx = document.querySelectorAll('.variant-row').length || 0;
+
+        function addVariantRow(prefill = {}) {
+            const node = document.importNode(tpl, true);
+            node.querySelectorAll('input').forEach(inp => {
+                inp.name = inp.name.replace('IDX', idx);
+                const key = inp.name.match(/\[(\w+)\]$/)?.[1];
+                if (key && prefill[key] !== undefined) inp.value = prefill[key];
+            });
+            variantsWrap.appendChild(node);
+            idx++;
+        }
+
+        if (idx === 0) addVariantRow();
+
+        addBtn.addEventListener('click', () => addVariantRow());
+
+        variantsWrap.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-variant')) {
+                const row = e.target.closest('.variant-row');
+                row?.remove();
+            }
+        });
+    </script>
 
 @endsection
