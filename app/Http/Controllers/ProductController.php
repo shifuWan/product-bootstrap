@@ -39,6 +39,8 @@ class ProductController extends Controller
         $dir = $request->get('dir', 'asc');   // asc|desc
 
         $products = Product::with('category')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->search($search)
             ->categorySlug($category)
             ->priceBetween($min, $max)

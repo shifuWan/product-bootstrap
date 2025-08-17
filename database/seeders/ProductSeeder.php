@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -25,6 +26,12 @@ class ProductSeeder extends Seeder
                 ProductVariant::factory(fake()->numberBetween(2, 5))
                     ->for($p)
                     ->create();
+
+                if (fake()->boolean(70)) {
+                    Review::factory(fake()->numberBetween(1, 5))
+                        ->for($p)
+                        ->create();
+                }
             });
 
             $this->command->info("Seeded chunk " . ($i + 1) . "/{$chunks}");
